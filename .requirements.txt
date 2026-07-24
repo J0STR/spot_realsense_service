@@ -3,4 +3,3 @@ bosdyn-mission
 bosdyn-choreography-client
 bosdyn-orbit
 pyrealsense2
-opencv-python
