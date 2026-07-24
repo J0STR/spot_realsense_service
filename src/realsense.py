@@ -22,7 +22,7 @@ class RealSenseD405(CameraInterface):
         self.color_mode = "bgr"
 
         # needed from API:
-        self.image_source_name = "D405_gripper"
+        self.image_source_name = "d405_gripper"
         self.rows = int(self.height)
         self.cols = int(self.width)
         self.camera_exposure = None
@@ -38,9 +38,13 @@ class RealSenseD405(CameraInterface):
         self.rs_profile = self.rs_pipeline.start(self.rs_config)
         
 
-        start_time = time.time()
-        while time.time() - start_time < self.warmup_s:
-            time.sleep(0.1)
+        print("Warming up camera for auto-exposure (pulling 30 frames)...")
+        for _ in range(30):
+            try:
+                self.rs_pipeline.wait_for_frames()
+            except RuntimeError:
+                pass # Ignore occasional dropped frames during startup
+            
         print("cam connected")
         self.default_jpeg_quality = 75
 

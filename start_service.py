@@ -15,12 +15,12 @@ from src.helper import *
 
 
 if __name__ == '__main__':
-    payload_ip = '192.168.50.3'
+    payload_ip = '192.168.50.5'
     port = 21012
 
     setup_logging(verbose=False, include_dedup_filter=True)
     sdk = bosdyn.client.create_standard_sdk("ImageServiceSDK")
-    robot = sdk.create_robot('192.168.80.3')
+    robot = sdk.create_robot('192.168.50.3')
 
     guid, secret = None, None
     with open('/opt/payload_credentials/payload_guid_and_secret', 'r') as f:
