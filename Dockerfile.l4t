@@ -2,20 +2,45 @@ FROM nvcr.io/nvidia/l4t-pytorch:r35.2.1-pth2.0-py3
 
 ENV DEBIAN_FRONTEND="noninteractive"
 
+# 1. Install build tools, libusb for RSUSB backend, and system OpenCV
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     cmake \
+    git \
+    libusb-1.0-0-dev \
+    pkg-config \
+    libssl-dev \
+    python3-dev \
     python3-opencv \
     && rm -rf /var/lib/apt/lists/*
 
+# 2. Build librealsense with RSUSB backend to bypass Jetson drivers
+RUN git clone --depth 1 --branch v2.54.2 https://github.com/IntelRealSense/librealsense.git /tmp/librealsense && \
+    cd /tmp/librealsense && \
+    mkdir build && cd build && \
+    cmake .. \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DFORCE_RSUSB_BACKEND=ON \
+        -DBUILD_PYTHON_BINDINGS:bool=true \
+        -DPYTHON_EXECUTABLE=$(which python3) \
+        -DBUILD_EXAMPLES=OFF \
+        -DBUILD_GRAPHICAL_EXAMPLES=OFF && \
+    make -j$(nproc) && \
+    make install && \
+    rm -rf /tmp/librealsense
+
+# Ensure Python can find the newly built pyrealsense2 library
+ENV PYTHONPATH="${PYTHONPATH}:/usr/local/lib:/usr/local/lib/python3.8/site-packages"
+
 WORKDIR /app
 
+# 3. Setup Python environment
 RUN python3 -m pip install --upgrade pip setuptools wheel
-
 RUN python3 -m pip install --upgrade "numpy>=1.20"
 
-COPY .requirements.txt .
-RUN python3 -m pip install -r .requirements.txt --find-links .
+# NOTE: You MUST remove `pyrealsense2` and `opencv-python` from requirements.txt!
+COPY requirements.txt .
+RUN python3 -m pip install -r requirements.txt --find-links .
 
 COPY start_service.py .
 COPY src/ ./src/
