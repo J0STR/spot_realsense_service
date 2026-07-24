@@ -2,4 +2,3 @@ bosdyn-client
 bosdyn-mission
 bosdyn-choreography-client
 bosdyn-orbit
-pyrealsense2
