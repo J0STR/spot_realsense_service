@@ -12,8 +12,8 @@ WORKDIR /app
 
 RUN python3 -m pip install --upgrade pip setuptools wheel
 
-COPY requirements.txt .
-RUN python3 -m pip install -r requirements.txt --find-links .
+COPY .requirements.txt .
+RUN python3 -m pip install -r .requirements.txt --find-links .
 
 COPY start_service.py .
 COPY src/ ./src/
