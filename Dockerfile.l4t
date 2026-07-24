@@ -32,6 +32,9 @@ RUN git clone --depth 1 --branch v2.54.2 https://github.com/IntelRealSense/libre
 # Ensure Python can find the newly built pyrealsense2 library
 ENV PYTHONPATH="${PYTHONPATH}:/usr/local/lib:/usr/local/lib/python3.8/site-packages"
 
+RUN SITE_PKG=$(python3 -c 'import site; print(site.getsitepackages()[0])') && \
+    find /usr -name 'pyrealsense2*.so' -exec cp {} $SITE_PKG \;
+
 WORKDIR /app
 
 # 3. Setup Python environment
