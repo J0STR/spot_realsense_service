@@ -5,8 +5,8 @@ from bosdyn.client.directory_registration import (DirectoryRegistrationClient,
 from bosdyn.client.util import setup_logging
 import bosdyn.util
 
-DIRECTORY_NAME = 'web-cam-service'
-AUTHORITY = 'robot-web-cam'
+DIRECTORY_NAME = 'realsense-service'
+AUTHORITY = 'robot-realsense-cam'
 SERVICE_TYPE = 'bosdyn.api.ImageService'
 
 _LOGGER = logging.getLogger(__name__)
